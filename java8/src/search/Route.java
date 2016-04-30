@@ -1,5 +1,7 @@
 package search;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Route {
@@ -17,7 +19,7 @@ public class Route {
 	private List<Transport> transports = new ArrayList<Transport>();
 
 	public boolean hasDestination(Location target) {
-		if (transports.isEmpty())
+		if (noTransport())
 			return false;
 
 		return transports.get(0).hasDestination(target);
@@ -33,7 +35,7 @@ public class Route {
 	}
 
 	public String show() {
-		if(transports.isEmpty())
+		if(noTransport())
 			return "";
 		
 		return reverse().toString();
@@ -41,7 +43,7 @@ public class Route {
 
 	private Route reverse() {
 		final Route reversed = new Route();
-		for (int i = transports.size() - 1; i >=0; i--) {
+		for (int i = transports.size() - 1; i >= 0; i--) {
 			reversed.add(transports.get(i));
 		}
 		return reversed;
@@ -59,19 +61,12 @@ public class Route {
 	}
 	
 	public boolean contains(Location location) {
-		for (Transport transport : transports) {
-			if (transport.contains(location))
-				return true;
-		}
-		return false;
+		return transports.stream()
+                .anyMatch(transport -> transport.contains(location));
 	}
 	
 	public double cost() {
-		double totalCost = 0;
-		for (Transport transport : transports) {
-			totalCost = transport.addCostTo(totalCost);
-		}
-		return totalCost;
+        return transports.stream()
+                .reduce(0.0, (totalCost, transport) -> transport.addCostTo(totalCost), Double::sum);
 	}
-
 }

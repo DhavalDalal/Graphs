@@ -57,10 +57,14 @@ public class Routes {
 	}
 
 	public Route getRouteAt(int number) {
-		if (routes.isEmpty() || number > routes.size() - 1) {
+		if (noRoutes() || number > count() - 1) {
 			return new Route();
 		}
 		return routes.get(number);
+	}
+
+	private boolean noRoutes() {
+		return routes.isEmpty();
 	}
 
 	public Route first() {
@@ -140,5 +144,4 @@ public class Routes {
 			}
 		});
 	}
-
 }

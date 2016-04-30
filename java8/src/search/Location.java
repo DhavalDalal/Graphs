@@ -1,11 +1,12 @@
 package search;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Location {
 
 	private final String name;
-	private List<Transport> outBoundTransports = new ArrayList<Transport>();
+	private List<Transport> outBoundTransports = new ArrayList<>();
 
 	public Location(String name) {
 		this.name = name;
@@ -22,7 +23,7 @@ public class Location {
 		if (isAt(target))
 			return new Routes().add(Route.VOID);
 		
-		return findRoutesTo(target, new ArrayList<Location>());
+		return findRoutesTo(target, new ArrayList<>());
 	}
 	
 	Routes findRoutesTo(Location target, List<Location> visited) {
@@ -36,10 +37,9 @@ public class Location {
 		}
 		
 		visited.add(this);
-		for (Transport transport : outBoundTransports) {
-			Routes newRoutes = transport.routesTo(target, visited).selectRoutesHavingDestination(target);
-			routes.addAll(newRoutes);
-		}
+		outBoundTransports.stream()
+			.map((Transport transport) -> transport.routesTo(target, visited).selectRoutesHavingDestination(target))
+			.forEach((Routes newRoutes) -> routes.addAll(newRoutes));
 		visited.remove(this);
 		return routes;
 	}
