@@ -88,8 +88,8 @@ public class LocationSpecs {
 		bombay.addTransportTo(coimbatore);
 		coimbatore.addTransportTo(pune);
 		//When
-		//Then
 		final Routes routes = bombay.findRoutesTo(pune);
+		//Then
 		assertEquals(2, routes.count());
 		assertEquals("[Bombay->Pune]", routes.getRouteAt(0).show());
 		assertEquals("[Bombay->Coimbatore, Coimbatore->Pune]", routes.getRouteAt(1).show());
@@ -105,9 +105,8 @@ public class LocationSpecs {
 		coimbatore.addTransportTo(chennai);
 		chennai.addTransportTo(pune);
 		//When
-		//Then
 		final Routes routes = bombay.findRoutesTo(pune);
-
+		//Then
 		assertEquals(4, routes.count());
 		assertEquals("[Bombay->Pune]", routes.getRouteAt(0).show());
 		assertEquals("[Bombay->Chennai, Chennai->Pune]", routes.getRouteAt(1).show());	
