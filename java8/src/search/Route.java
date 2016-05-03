@@ -1,72 +1,73 @@
 package search;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Route {
 
-	public static final Route VOID = new Route() {
-		public void add(Transport transport) {
-		};
-		public boolean hasDestination(Location target) {
-			return false;
-		};
-		public String show() {
-			return "VOID";
-		};
-	};
-	private List<Transport> transports = new ArrayList<Transport>();
+    public static final Route VOID = new Route() {
+        public void add(Transport transport) {
+        }
 
-	public boolean hasDestination(Location target) {
-		if (noTransport())
-			return false;
+        public boolean hasDestination(Location target) {
+            return false;
+        }
 
-		return transports.get(0).hasDestination(target);
-	}
+        public String show() {
+            return "VOID";
+        }
+    };
+    private List<Transport> transports = new ArrayList<>();
 
-	void add(Transport transport) {
-		transports.add(transport);
-	}
-	
-	@Override
-	public String toString() {
-		return transports.toString();
-	}
+    public boolean hasDestination(Location target) {
+        if (noTransport())
+            return false;
 
-	public String show() {
-		if(noTransport())
-			return "";
-		
-		return reverse().toString();
-	}
+        return transports.get(0).hasDestination(target);
+    }
 
-	private Route reverse() {
-		final Route reversed = new Route();
-		for (int i = transports.size() - 1; i >= 0; i--) {
-			reversed.add(transports.get(i));
-		}
-		return reversed;
-	}
+    void add(Transport transport) {
+        transports.add(transport);
+    }
 
-	public int hops() {
-		if (noTransport())
-			return 0;
-		
-		return transports.size() - 1;
-	}
+    @Override
+    public String toString() {
+        return transports.toString();
+    }
 
-	private boolean noTransport() {
-		return transports.isEmpty();
-	}
-	
-	public boolean contains(Location location) {
-		return transports.stream()
+    public String show() {
+        if (noTransport())
+            return "";
+
+        return reverse().toString();
+    }
+
+    private Route reverse() {
+        final Route reversed = new Route();
+        for (int i = transports.size() - 1; i >= 0; i--) {
+            reversed.add(transports.get(i));
+        }
+        return reversed;
+    }
+
+    public int hops() {
+        if (noTransport())
+            return 0;
+
+        return transports.size() - 1;
+    }
+
+    private boolean noTransport() {
+        return transports.isEmpty();
+    }
+
+    public boolean contains(Location location) {
+        return transports.stream()
                 .anyMatch(transport -> transport.contains(location));
-	}
-	
-	public double cost() {
+    }
+
+    public double cost() {
         return transports.stream()
                 .reduce(0.0, (totalCost, transport) -> transport.addCostTo(totalCost), Double::sum);
-	}
+    }
 }
