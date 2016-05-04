@@ -1,147 +1,150 @@
 package search;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class Routes {
-	private List<Route> routes = new ArrayList<>();
+    private List<Route> routes = new ArrayList<>();
 
-	private static interface Criterion {
-		public boolean isSatisfiedBy(Route route);
-	};
-	private static final Comparator<Route> byHopsAscending = new Comparator<Route>(){
-		@Override
-		public int compare(Route r1, Route r2) {
-			return r1.hops() - r2.hops();
-		}
-	};
-	
-	private static final Comparator<Route> byCostAscending = new Comparator<Route>(){
-		@Override
-		public int compare(Route r1, Route r2) {
-			return Double.compare(r1.cost(), r2.cost());
-		}
-	};
+    private static interface Criterion {
+        public boolean isSatisfiedBy(Route route);
+    }
 
-	public String show() {
-		StringBuilder allRoutes = new StringBuilder();
-		for (Route route : routes) {
-			allRoutes.append(route.show());
-		}
-		return allRoutes.toString();
-	}
+    ;
+    private static final Comparator<Route> byHopsAscending = new Comparator<Route>() {
+        @Override
+        public int compare(Route r1, Route r2) {
+            return r1.hops() - r2.hops();
+        }
+    };
 
-	Routes add(Route route) {
-		routes.add(route);
-		return this;
-	}
+    private static final Comparator<Route> byCostAscending = new Comparator<Route>() {
+        @Override
+        public int compare(Route r1, Route r2) {
+            return Double.compare(r1.cost(), r2.cost());
+        }
+    };
 
-	void addAll(Routes newRoutes) {
-		routes.addAll(newRoutes.routes);
-	}
+    public String show() {
+        StringBuilder allRoutes = new StringBuilder();
+        for (Route route : routes) {
+            allRoutes.append(route.show());
+        }
+        return allRoutes.toString();
+    }
 
-	void add(Transport transport) {
-		for (Route route : routes) {
-			route.add(transport);
-		}
-	}
+    Routes add(Route route) {
+        routes.add(route);
+        return this;
+    }
 
-	public Routes selectRoutesHavingDestination(Location target) {
-		return select(new Criterion() {
-			@Override
-			public boolean isSatisfiedBy(Route route) {
-				return route.hasDestination(target);
-			}
-		});
-	}
+    void addAll(Routes newRoutes) {
+        routes.addAll(newRoutes.routes);
+    }
 
-	public Route getRouteAt(int number) {
-		if (noRoutes() || number > count() - 1) {
-			return new Route();
-		}
-		return routes.get(number);
-	}
+    void add(Transport transport) {
+        for (Route route : routes) {
+            route.add(transport);
+        }
+    }
 
-	private boolean noRoutes() {
-		return routes.isEmpty();
-	}
+    public Routes selectRoutesHavingDestination(Location target) {
+        return select(new Criterion() {
+            @Override
+            public boolean isSatisfiedBy(Route route) {
+                return route.hasDestination(target);
+            }
+        });
+    }
 
-	public Route first() {
-		return getRouteAt(0);
-	}
+    public Route getRouteAt(int number) {
+        if (noRoutes() || number > count() - 1) {
+            return new Route();
+        }
+        return routes.get(number);
+    }
 
-	public int count() {
-		return routes.size();
-	}
+    private boolean noRoutes() {
+        return routes.isEmpty();
+    }
 
-	@Override
-	public String toString() {
-		return show();
-	}
+    public Route first() {
+        return getRouteAt(0);
+    }
 
-	public Routes direct() {
-		return hopsLessThanOrEqualTo(0);
-	}
+    public int count() {
+        return routes.size();
+    }
 
-	public Routes hopsLessThanOrEqualTo(int howMany) {
-		return select(new Criterion() {
-			@Override
-			public boolean isSatisfiedBy(Route route) {
-				return route.hops() <= howMany;
-			}
-		});
-	}
+    @Override
+    public String toString() {
+        return show();
+    }
 
-	private Routes select(Criterion criterion) {
-		final Routes selected = new Routes();
-		for (Route route : routes) {
-			if (criterion.isSatisfiedBy(route))
-				selected.add(route);
-		}
-		return selected;
-	}
+    public Routes direct() {
+        return hopsLessThanOrEqualTo(0);
+    }
 
-	public boolean contains(String expectedRoute) {
-		List<String> allRoutes = new ArrayList<>();
-		for (Route route : routes) {
-			allRoutes.add(route.show());
-		}
-		return allRoutes.contains(expectedRoute);
-	}
+    public Routes hopsLessThanOrEqualTo(int howMany) {
+        return select(new Criterion() {
+            @Override
+            public boolean isSatisfiedBy(Route route) {
+                return route.hops() <= howMany;
+            }
+        });
+    }
 
-	public Routes via(Location location) {
-		return select(new Criterion() {
-			@Override
-			public boolean isSatisfiedBy(Route route) {
-				return route.contains(location);
-			}
-		});
-	}
-	
-	private Routes sort(Comparator<Route> comparator) {
-		List<Route> sorted = new ArrayList<>(routes);
-		Collections.sort(sorted, comparator);
-		Routes routes = new Routes();
-		routes.routes = sorted;
-		return routes;
-	}
-	
-	public Routes shortest() {
-		Routes sorted = sort(byHopsAscending);
-		final int minHops = sorted.getRouteAt(0).hops();
-		return hopsLessThanOrEqualTo(minHops);
-	}
-	
-	public Routes cheapest() {
-		Routes sorted = sort(byCostAscending);
-		final double minCost = sorted.getRouteAt(0).cost();
+    private Routes select(Criterion criterion) {
+        final Routes selected = new Routes();
+        for (Route route : routes) {
+            if (criterion.isSatisfiedBy(route))
+                selected.add(route);
+        }
+        return selected;
+    }
 
-		return select(new Criterion() {
-			@Override
-			public boolean isSatisfiedBy(Route route) {
-				return route.cost() == minCost;
-			}
-		});
-	}
+    public boolean contains(String expectedRoute) {
+        List<String> allRoutes = new ArrayList<>();
+        for (Route route : routes) {
+            allRoutes.add(route.show());
+        }
+        return allRoutes.contains(expectedRoute);
+    }
+
+    public Routes via(Location location) {
+        return select(new Criterion() {
+            @Override
+            public boolean isSatisfiedBy(Route route) {
+                return route.contains(location);
+            }
+        });
+    }
+
+    private Routes sort(Comparator<Route> comparator) {
+        List<Route> sorted = new ArrayList<>(routes);
+        Collections.sort(sorted, comparator);
+        Routes routes = new Routes();
+        routes.routes = sorted;
+        return routes;
+    }
+
+    public Routes shortest() {
+        Routes sorted = sort(byHopsAscending);
+        final int minHops = sorted.getRouteAt(0).hops();
+        return hopsLessThanOrEqualTo(minHops);
+    }
+
+    public Routes cheapest() {
+        Routes sorted = sort(byCostAscending);
+        final double minCost = sorted.getRouteAt(0).cost();
+
+        return select(new Criterion() {
+            @Override
+            public boolean isSatisfiedBy(Route route) {
+                return route.cost() == minCost;
+            }
+        });
+    }
 }

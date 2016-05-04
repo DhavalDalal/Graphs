@@ -39,8 +39,9 @@ public class Location {
 
         visited.add(this);
         outBoundTransports.stream()
-                .map((Transport transport) -> transport.routesTo(target, visited).selectRoutesHavingDestination(target))
-                .forEach((Routes newRoutes) -> routes.addAll(newRoutes));
+                .map((Transport transport) -> transport.routesTo(target, visited))
+                .map(all -> all.selectHavingDestination(target))
+                .forEach(selected -> routes.addAll(selected));
         visited.remove(this);
         return routes;
     }
