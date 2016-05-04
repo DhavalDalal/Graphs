@@ -39,7 +39,7 @@ public class Routes {
         }
     }
 
-    public Routes selectRoutesHavingDestination(Location target) {
+    public Routes selectHavingDestination(Location target) {
         return new Routes(routes.stream()
                 .filter(route -> route.hasDestination(target))
                 .collect(Collectors.toList()));
