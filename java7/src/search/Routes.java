@@ -50,7 +50,7 @@ public class Routes {
         }
     }
 
-    public Routes selectRoutesHavingDestination(Location target) {
+    public Routes selectHavingDestination(Location target) {
         return select(new Criterion() {
             @Override
             public boolean isSatisfiedBy(Route route) {

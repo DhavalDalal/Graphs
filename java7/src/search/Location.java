@@ -40,7 +40,7 @@ public class Location {
         visited.add(this);
         for (Transport transport : outBoundTransports) {
             Routes newRoutes = transport.routesTo(target, visited)
-                    .selectRoutesHavingDestination(target);
+                    .selectHavingDestination(target);
             routes.addAll(newRoutes);
         }
         visited.remove(this);
